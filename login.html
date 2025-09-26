@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/jpg" href="img/frutigerIcon.jpg">
+  <title>Login - Bamas</title>
+</head>
+<body>
+
+  <div class="login-box">
+
+    <img src="img/imgPerfil.png" alt="" class="user-avatar">
+
+    <div class="form-group">
+    <input type="text" id="player1" placeholder="Player 1" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+    <input type="text" id="player2" placeholder="Player 2" class="form-input" required>
+
+    <button id="startBtn" class="arrow-btn"><img src="img/button.png" height="40" width="35px"></button>
+    </div>
+
+    <font color="red" style="font-size: 12px;">ATENÇÃO: Não repita nomes de outros players!</font>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabaseUrl = 'https://vvkvrqfaqaopeayheuyq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2a3ZycWZhcWFvcGVheWhldXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTU5MzIsImV4cCI6MjA3MzM3MTkzMn0.N7RAgd7jUQsh-_1C7UeRvrH7CMBF1q0jdg38jr4w5eQ';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const startBtn = document.getElementById('startBtn');
+
+    startBtn.addEventListener('click', async () => {
+      const p1 = document.getElementById("player1").value.trim();
+      const p2 = document.getElementById("player2").value.trim();
+
+      // Validação simples
+      if (!p1 || !p2) {
+        alert("Por favor, preencha os dois jogadores!");
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("partidas")
+          .insert([{ player1: p1, player2: p2 }])
+          .select();
+
+        if (error) {
+          console.error("Erro ao criar partida:", error);
+          alert("Erro ao criar partida: " + error.message);
+          return;
+        }
+
+        if (!data || !data[0] || !data[0].id) {
+          console.error("ID da partida não retornou:", data);
+          alert("Erro inesperado. Tente novamente.");
+          return;
+        }
+
+        const partida = data[0];
+        localStorage.setItem("partidaId", partida.id);
+        localStorage.setItem("player1", p1);
+        localStorage.setItem("player2", p2);
+
+        // Vai para o jogo
+        window.location.href = "selecao.html";
+
+      } catch (err) {
+        console.error("Erro inesperado:", err);
+        alert("Ocorreu um erro ao iniciar a partida.");
+      }
+    });
+  </script>
+</body>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background-image: url(img/background.png);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 40px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background-image: url("bamasV4/img/imgPerfil.png");
+            border-radius: 6px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            color: #333;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+        }
+
+        .arrow-btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            
+        }
+    </style>
+</html>

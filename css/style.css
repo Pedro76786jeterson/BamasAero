@@ -1,0 +1,265 @@
+/* ================================
+   Variáveis principais
+   ================================ */
+:root {
+  --size: 70px;
+  --sel: rgba(255, 255, 0, 0.6);
+  --tgt: rgba(255, 0, 204, 0.6);
+
+   --bg-image: url(../img/wallpaper2.gif);
+}
+
+[data-theme="tema2"] {
+  --bg-image: url(../img/wallpaper.jpg);
+}
+
+/* ================================
+   Layout geral
+   ================================ */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  background-image: var(--bg-image);  /* ← Já usa a variável */
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* ================================
+   Container principal
+   ================================ */
+.game-container {
+  display: grid;
+  grid-template-columns: 280px auto 280px;
+  gap: 30px;
+  align-items: center;
+  z-index: 1;
+}
+
+/* ================================
+   Painéis laterais
+   ================================ */
+.left-table, .right-table {
+  display: flex;
+  align-items: center;
+  height: calc(var(--size) * 8);
+}
+
+/* ================================
+   Painéis transparentes
+   ================================ */
+.table-container {
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(4px);
+}
+
+.table-container h3 {
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-size: 1.1em;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+}
+
+/* ================================
+   Tabelas internas
+   ================================ */
+.moves-table, .scores-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+.moves-table th, .moves-table td,
+.scores-table th, .scores-table td {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 6px;
+  text-align: center;
+  word-wrap: break-word;
+  white-space: normal;
+  font-size: 12.5px;
+  background: rgba(255,255,255,0.05);
+}
+
+.moves-table thead th, .scores-table thead th {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+}
+
+/* Efeito suave para imagens no histórico */
+.moves-table td img {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ================================
+   Painel de status
+   ================================ */
+#status {
+  margin-bottom: 15px;
+  font-size: 1.3em;
+  font-weight: bold;
+  background: rgba(255,255,255,0.10);
+  border-radius: 4px;
+  padding: 10px 20px;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.status-chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 4px 4px 6px rgba(0,0,0,0.4);
+}
+
+/* Imagem pequena para “chips” (histórico, placar) */
+.chip-img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ================================
+   Botões
+   ================================ */
+#controls {
+  margin-top: 15px;
+  gap: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sair {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sair:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ================================
+   Tabuleiro
+   ================================ */
+#board {
+  display: grid;
+  grid-template: repeat(8, var(--size)) / repeat(8, var(--size));
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  transform: rotate(90deg);
+  transform-origin: center center;
+  will-change: transform;
+  backdrop-filter: blur(4px);
+}
+
+/* ================================
+   Células do tabuleiro
+   ================================ */
+.cell {
+  width: var(--size);
+  height: var(--size);
+  box-sizing: border-box;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: none;
+  backface-visibility: hidden;
+}
+
+.cell.light, .cell.dark {
+  background-size: 102% 102%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.light { background-image: url('../img/grama-clara.png'); }
+.dark  { background-image: url('../img/grama-escura.png'); cursor: pointer; }
+
+.cell.sel { outline: 3px solid var(--sel); }
+.cell.tgt { outline: 3px solid var(--tgt); }
+
+/* ================================
+   Peças
+   ================================ */
+.piece {
+  width: calc(var(--size) - 8px);
+  height: calc(var(--size) - 8px);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.white { background-image: url('../img/peca-verde.png'); border: none; }
+.black { background-image: url('../img/peca-azul.png'); border: none; }
+
+.king::after {
+  content: "♛";
+  position: absolute;
+  font-size: 1.4em;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}

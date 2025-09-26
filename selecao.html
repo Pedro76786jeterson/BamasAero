@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/jpg" href="img/frutigerIcon.jpg">
+    <title>Bamas | Tema</title>
+
+   <div class="text">Selecione uma temática</div> 
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            gap: 50px;
+            background-image: url(img/background.png);
+            font-family: Arial, sans-serif;
+            background-size: cover;
+        }
+
+        .text {
+            color: #fff;
+            position: absolute;
+            margin-bottom: 300px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .opcao {
+            width: 300px;
+            height: 200px;
+            cursor: pointer;
+            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .opcao:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="opcao" onclick="escolherImagem('tema1')" 
+         style="background-image: url('img/imgEscolha1.png')">
+      
+    </div>
+    
+    <div class="opcao" onclick="escolherImagem('tema2')" 
+         style="background-image: url('img/imgEscolha2.png')">
+       
+    </div>
+
+    <script>
+        function escolherImagem(tema) {
+            // Salvar a escolha
+            localStorage.setItem('imagemEscolhida', tema);
+            
+            // Redirecionar para o jogo
+            window.location.href = 'jogo.html'; // seu arquivo de jogo
+        }
+    </script>
+</body>
+</html>

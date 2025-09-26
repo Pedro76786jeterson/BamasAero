@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/jpg" href="img/frutigerIcon.jpg">
+  <title>Bamas</title>
+  <style>
+    /* Reset simples */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Corpo para demonstrar conteúdo sobre o vídeo */
+    body,
+    html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Vídeo em fullscreen por trás de tudo */
+    .bg-video {
+      position: fixed;
+      /* fica fixo na viewport */
+      inset: 0;
+      /* top:0; right:0; bottom:0; left:0; */
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* preenche mantendo proporção (pode cortar partes) */
+      z-index: -1;
+      /* fica atrás do conteúdo */
+      pointer-events: none;
+      /* evita que o vídeo capture cliques */
+    }
+
+    /* Exemplo de conteúdo que fica por cima */
+    .content>div {
+      display: flex;
+      align-items: center;
+      /* centraliza verticalmente */
+      gap: 20px;
+      /* espaço entre logo e botão */
+    }
+
+
+    /* Uma camada escura opcional para melhorar leitura do texto */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* estilinho do botão só como demo */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+    }
+
+ /*   .table {
+    position: fixed; /* Fixa a imagem na tela 
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 40%;
+    z-index: 9999;  Garante que a imagem fique acima de tudo 
+    pointer-events: none;  Ignora interações com a imagem 
+    margin-top: 450px;
+}
+
+.table img {
+    width: 100%;
+    height: auto;
+} */
+
+.status {
+  margin-bottom: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: rgba(255,255,255,0.10);
+  border-radius: 4px;
+  padding: 10px 20px;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- Vídeo -->
+  <video id="bg-video" class="bg-video" autoplay muted loop playsinline poster="img/carregando.gif" aria-hidden="true">
+    <!-- Forneça múltiplos formatos para compatibilidade -->
+    <source src="FrutigerBackground.mp4" type="video/mp4">
+    <!-- Texto alternativo para navegadores antigos -->
+    Seu navegador não suporta vídeo em HTML5.
+  </video>
+
+  <button id="sound-btn">🔊 Ativar som</button>
+
+  <script type="module">
+   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://vvkvrqfaqaopeayheuyq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2a3ZycWZhcWFvcGVheWhldXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTU5MzIsImV4cCI6MjA3MzM3MTkzMn0.N7RAgd7jUQsh-_1C7UeRvrH7CMBF1q0jdg38jr4w5eQ'; 
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    // ADICIONAR ESTA LINHA:
+    window.supabase = supabase;
+
+  async function carregarPartidas() {
+    const { data, error } = await supabase
+      .from('partidas')
+      .select('*')
+      .order('data_partida', { ascending: false });
+
+    if (error) {
+      console.error('Erro ao buscar partidas:', error);
+      return;
+    }
+
+    const container = document.createElement('div');
+container.style.position = 'fixed';
+container.style.bottom = '20px';
+container.style.left = '30%';
+container.style.transform = 'translateX(-57%)';
+container.style.zIndex = '9999';
+container.style.background = 'rgba(255,255,255,0.10)';
+container.style.textShadow = '1px 1px 3px rgba(0,0,0,0.6)';
+container.style.maxHeight = '400px';
+container.style.overflowY = 'auto';
+container.style.color = 'white';
+container.style.border = '2px solid rgba(255,255,255,0.3)';
+container.style.padding = '10px';
+container.style.borderRadius = '12px';
+container.style.marginBottom = '40px';
+container.style.marginRight = '120px';
+container.style.backgroundColor = 'rgba(0, 0, 0, 0.0)';
+container.style.backdropFilter = 'blur(4px)';
+
+const tabela = document.createElement('table');
+tabela.style.borderCollapse = 'collapse';
+tabela.style.width = '100%';
+tabela.style.textAlign = 'center';
+tabela.style.fontSize = '0.9rem';
+
+const thead = document.createElement('thead');
+thead.innerHTML = `
+  <tr>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Player 1</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Player 2</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Mov P1</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Mov P2</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Capt P1</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Capt P2</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Pontos P1</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Pontos P2</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Vencedor</th>
+    <th style="padding: 8px; border-bottom: 1px solid white;">Data</th>
+  </tr>
+`;
+tabela.appendChild(thead);
+
+const tbody = document.createElement('tbody');
+
+data.forEach(p => {
+  const linha = document.createElement('tr');
+  linha.innerHTML = `
+    <td style="padding: 6px;">${p.player1}</td>
+    <td style="padding: 6px;">${p.player2}</td>
+    <td style="padding: 6px;">${p.movimentos_p1}</td>
+    <td style="padding: 6px;">${p.movimentos_p2}</td>
+    <td style="padding: 6px;">${p.capturas_p1}</td>
+    <td style="padding: 6px;">${p.capturas_p2}</td>
+    <td style="padding: 6px;">${p.pontos_p1}</td>
+    <td style="padding: 6px;">${p.pontos_p2}</td>
+    <td style="padding: 6px;">${p.vencedor || '-'}</td>
+    <td style="padding: 6px;">${new Date(p.data_partida).toLocaleString('pt-BR')}</td>
+  `;
+  linha.style.borderBottom = '1px solid rgba(255,255,255,0.2)';
+  tbody.appendChild(linha);
+});
+
+tabela.appendChild(tbody);
+container.appendChild(tabela);
+document.body.appendChild(container);
+
+    tabela.innerHTML = cabecalho;
+
+    data.forEach(p => {
+      const linha = document.createElement('tr');
+      linha.innerHTML = `
+        <td>${p.player1}</td>
+        <td>${p.player2}</td>
+        <td>${p.movimentos_p1}</td>
+        <td>${p.movimentos_p2}</td>
+        <td>${p.capturas_p1}</td>
+        <td>${p.capturas_p2}</td>
+        <td>${p.pontos_p1}</td>
+        <td>${p.pontos_p2}</td>
+        <td>${p.vencedor || '-'}</td>
+        <td>${new Date(p.data_partida).toLocaleString('pt-BR')}</td>
+      `;
+      linha.style.borderBottom = '1px solid white';
+      tabela.appendChild(linha);
+    });
+
+    container.appendChild(tabela);
+    document.body.appendChild(container);
+  }
+
+  carregarPartidas();
+
+    const video = document.getElementById('bg-video');
+    const btn = document.getElementById('sound-btn');
+
+    btn.addEventListener('click', () => {
+      if (video.muted) {
+        video.muted = false;
+        btn.textContent = "🔇 Silenciar";
+      } else {
+        video.muted = true;
+        btn.textContent = "🔊 Ativar som";
+      }
+    });
+  </script>
+
+  <!-- Overlay escuro opcional para melhorar contraste -->
+  <div class="overlay" aria-hidden="true"></div>
+
+  <!-- Conteúdo da página sobre o vídeo -->
+  <main class="content">
+    <div class="imagens">
+
+      <img src="img/logoAero.png" alt="" class="logo" height="700px" width="1200px">
+      <a class="btn" href="login.html"><img src="img/start2.png" alt="" height="310px" width="310px"></a>
+    </div>
+  </main>
+
+<!--<img src="img/teste.png" alt="" class="table">-->  
+
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bamas</title>
+  <link rel="icon" type="image/jpg" href="img/frutigerIcon.jpg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <audio id="bgm" src="audio/frutigerplaylist.mp3" loop preload="auto"></audio>
+
+  <div class="game-container">
+
+    <!-- Histórico de Jogadas -->
+    <div class="left-table">
+      <div class="table-container">
+        <h3>📋 Histórico</h3>
+        <table class="moves-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Jogador</th><th>De</th><th>Para</th>
+            </tr>
+          </thead>
+          <tbody id="moves-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabuleiro e Controles -->
+    <div class="game-board-section">
+      <div id="status">
+        <img id="status-piece" class="status-chip" src="img/peca-verde.png" alt="Peça atual" />
+        <span id="status-text">Vez do jogador Verde</span>
+      </div>
+
+      <div id="board"></div>
+
+      <div id="controls">
+        <button id="restart">Reiniciar Jogo</button>
+        <a href="index.html" class="sair">Logout</a>
+      </div>
+    </div>
+
+    <!-- Placar -->
+    <div class="right-table">
+      <div class="table-container">
+        <h3>🏆 Placar</h3>
+        <table class="scores-table">
+          <thead>
+            <tr><th>Jogador</th><th>Vitórias</th><th>Capturas</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src="img/peca-verde.png" width="24" height="24" alt="Verde"></td>
+              <td id="white-wins">0</td>
+              <td id="white-captures">0</td>
+            </tr>
+            <tr>
+              <td><img src="img/peca-azul.png" width="24" height="24" alt="Azul"></td>
+              <td id="black-wins">0</td>
+              <td id="black-captures">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Seu JS principal -->
+  <script src="js/app.js"></script>
+
+  <!-- Música de fundo -->
+  <script>
+    const bgm = document.getElementById('bgm');
+    bgm.volume = 0.4; // volume suave
+
+    const iniciarSom = async () => {
+      try {
+        await bgm.play();
+        console.log('🎵 Música de fundo iniciada');
+      } catch (err) {
+        console.warn('Erro ao iniciar som:', err);
+      }
+    };
+
+    ['click', 'keydown', 'touchstart'].forEach(evt => {
+      document.addEventListener(evt, iniciarSom, { once: true });
+    });
+  </script>
+
+  <!-- Supabase -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://vvkvrqfaqaopeayheuyq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2a3ZycWZhcWFvcGVheWhldXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3OTU5MzIsImV4cCI6MjA3MzM3MTkzMn0.N7RAgd7jUQsh-_1C7UeRvrH7CMBF1q0jdg38jr4w5eQ'; 
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    // ADICIONAR ESTA LINHA:
+    window.supabase = supabase;
+
+    // Função para salvar o final da partida
+    window.finalizarPartida = async function(stats) {
+      const partidaId = localStorage.getItem("partidaId");
+      if (!partidaId) return;
+
+      const { error } = await supabase
+        .from("partidas")
+        .update({
+          movimentos_p1: stats.movP1,
+          movimentos_p2: stats.movP2,
+          capturas_p1: stats.capP1,
+          capturas_p2: stats.capP2,
+          pontos_p1: stats.pontosP1,
+          pontos_p2: stats.pontosP2,
+          vencedor: stats.vencedor
+        })
+        .eq("id", partidaId);
+
+      if (error) {
+        alert("Erro ao salvar resultado: " + error.message);
+      } else {
+        alert("Resultado salvo com sucesso!");
+      }
+    }
+  </script>
+
+  <script>
+// Aplicar a imagem escolhida quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    const imagemEscolhida = localStorage.getItem('imagemEscolhida');
+    
+    if (imagemEscolhida === 'tema2') {
+        document.body.setAttribute('data-theme', 'tema2');
+    }
+    // Se for 'tema1' ou null, usa o padrão (não precisa fazer nada)
+});
+</script>
+
+</body>
+</html>
